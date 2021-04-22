@@ -16,9 +16,13 @@ The stack selected was:
 
 ## Architecture
 
-The architecture proposed was a Lightweight Event driven pattern in a small scope, the only action that is convert the number will depend from events made by the user ans synced by the components
+- The architecture proposed was a Lightweight Event driven pattern in a small scope, the only action that is convert the number will depend from events made by the user ans synced by the components
 
-  - **App**: Is the entry point of the App, due to the simplicity of the App I decide not use router but keep everything inside global App component
+- Regarding the converter number function, I decide to use a purely functional approach to improve readability and complexity, it has a decent time and space complexity taking in mind the amount of inputs
+
+## Folder Stucture
+
+  - **App.ts**: Is the entry point of the App, due to the simplicity of the App I decide not use router but keep everything inside global App component
     - **Components**: Contains the main components of the App
     - **Core**: Contains all the core components of the App, that means components that will be shared among all the App
     - **Services**: Contains the services to handle complex behaviors, such as control the conversion process
