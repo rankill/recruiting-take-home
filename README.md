@@ -16,14 +16,14 @@ The stack selected was:
 
 ## Architecture
 
-The architecture proposed is an Event driven patter in a small scope
+The architecture proposed was a Lightweight Event driven pattern in a small scope, the only action that is convert the number will depend from events made by the user ans synced by the components
 
   - **App**: Is the entry point of the App, due to the simplicity of the App I decide not use router but keep everything inside global App component
     - **Components**: Contains the main components of the App
     - **Core**: Contains all the core components of the App, that means components that will be shared among all the App
     - **Services**: Contains the services to handle complex behaviors, such as control the conversion process
     - **Assets**: Contains all the media used by the App
-  - **Tests**: Contains all the test suite, the architecture proposed is create the same folder structure to keep it simpler and accessible, keep spec definitions inside main folder tend to grow and disorganize 
+  - **Tests**: Contains all the test suite, the architecture proposed is create the same folder structure to keep it simpler and accessible, keeping spec definitions inside main folder tend to grow and disorganize 
 
 
 ## Project setup
