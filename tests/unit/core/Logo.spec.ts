@@ -1,10 +1,9 @@
 import { mount } from '@vue/test-utils';
-import App from '@/App.vue';
+import Logo from '@/core/Logo.vue';
 
-describe('Mounted App', () => {
-  const wrapper = mount(App);
-
-  test('is a Vue instance', () => {
+describe('Header component', () => {
+  it('Render component', () => {
+    const wrapper = mount(Logo as never);
     expect(wrapper.vm).toBeTruthy();
   });
 });

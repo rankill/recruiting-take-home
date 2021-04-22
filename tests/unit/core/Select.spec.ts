@@ -1,10 +1,15 @@
 import { mount } from '@vue/test-utils';
-import App from '@/App.vue';
+import Select from '@/core/Select.vue';
 
-describe('Mounted App', () => {
-  const wrapper = mount(App);
+describe('Select component', () => {
+  it('Render component with props passed', () => {
+    const wrapper = mount(Select as never, {
+      propsData: { options: ['english', 'roman'] },
+    });
 
-  test('is a Vue instance', () => {
+    const select = wrapper.find('select');
+
     expect(wrapper.vm).toBeTruthy();
+    expect(select.element.value).toBe('english');
   });
 });

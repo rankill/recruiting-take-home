@@ -87,16 +87,42 @@ const convertToEnglish = (numberToConvert: number | string): string => {
     'nonillion',
   ];
 
-  const buildStringsGroups = ([ones, tens, huns]: string[]) => {
-    const buildTens = (arrayMap: string[]) => (index: string) =>
+  const buildStringsGroups = (
+    [ones, tens, huns]: string[],
+    index: number,
+    originalArray: string[]
+  ) => {
+    const buildTens = (arrayMap: string[]) => (index: string) => (
+      needAnd: boolean
+    ) =>
       arrayMap[index] && arrayMap[index]
-        ? `and ${arrayMap[tens] && arrayMap[index]} -`
+        ? `${needAnd ? 'and' : ''} ${arrayMap[tens] && arrayMap[index]}-`
         : '';
 
+    const stringHuns =
+      toNumber(huns) === 0 ? '' : `${hundredsMap[huns]} hundred `;
+
+    const stringTens =
+      toNumber(ones) === 0
+        ? tensMap[tens]
+        : buildTens(tensMap)(tens)(!!stringHuns);
+
+    let stringOnes = hundredsMap[tens + ones] || hundredsMap[ones];
+
+    // Validate if the ones need an 'and' before it
+    stringOnes = `${
+      index === 0 && // Just add and on the first member of each group
+      originalArray.length > 1 && // Only if the array has more than one group
+      toNumber(ones) === 0 &&
+      stringOnes
+        ? 'and '
+        : ''
+    }${stringOnes}`;
+
     return [
-      toNumber(huns) === 0 ? '' : `${hundredsMap[huns]} hundred `, // Build hundreds
-      toNumber(ones) === 0 ? tensMap[tens] : buildTens(tensMap)(tens), // Build tens
-      hundredsMap[tens + ones] || hundredsMap[ones], // Build ones
+      stringHuns, // Build hundreds
+      stringTens, // Build tens
+      stringOnes, // Build ones
     ].join('');
   };
 
@@ -118,6 +144,7 @@ const convertToEnglish = (numberToConvert: number | string): string => {
       .filter(compose(not)(isEmpty)) // Clean string by not empty values
       .reverse() // Re organize array
       .join(' ')
+      .trim()
   );
 };
 

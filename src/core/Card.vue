@@ -20,10 +20,11 @@ import { Options, Vue } from 'vue-class-component';
 @Options({
   props: {
     title: String,
+    default: () => 'Card title',
   },
 })
 export default class Card extends Vue {
-  msg!: string;
+  title!: string;
 }
 </script>
 

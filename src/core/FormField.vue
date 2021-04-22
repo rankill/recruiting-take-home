@@ -34,7 +34,6 @@ import { Options, Vue } from 'vue-class-component';
     },
     isReadOnly: {
       type: Boolean,
-      required: false,
       default: () => false,
     },
     readOnlyValue: {
