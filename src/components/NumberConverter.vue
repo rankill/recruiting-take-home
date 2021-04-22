@@ -3,27 +3,44 @@
     <div class="NumberConverter__overlay"></div>
 
     <Card class="NumberConverter__card" title="Convert integer to text">
-      <form class="NumberConverter__card__form">
-        <FormField
-          title="Enter your favorite number"
-          placeholder="Enter a number here"
-          required
-          type="number"
-          @input="formattedNumber = ''"
-          v-model="currentNumber"
-        />
+      <FormField
+        title="Enter your favorite number"
+        placeholder="Enter a number here"
+        required
+        type="number"
+        @input="convertedNumber = ''"
+        v-model="currentNumber"
+        @keypress.enter="convertNumber"
+      />
 
-        <FormField
-          title="Your number in text"
-          placeholder="Your number will show here"
-          :isReadOnly="true"
-          :readOnlyValue="formattedNumber"
-        />
-      </form>
+      <FormField
+        :title="`Your number in text`"
+        placeholder="Your number will show here"
+        :isReadOnly="true"
+        :readOnlyValue="convertedNumber"
+      />
 
       <template v-slot:actions>
         <div class="NumberConverter__card__actions">
-          <Button @clicked="convertNumber()" :isDisable="!currentNumber">
+          <!-- 
+              If we want to grow our app and have more than one language 
+              just add them into the constant enum type
+              
+              The select is only for growing purpose so remove the v-if 
+              statement to see it working 
+          -->
+          <Select
+            v-if="false"
+            :options="languagesOptions"
+            :default="languagesOptions[0]"
+            @change="updateLanguage($event)"
+          />
+
+          <Button
+            class="NumberConverter__card__actions__button"
+            @clicked="convertNumber()"
+            :isDisable="!isValid"
+          >
             Convert
           </Button>
         </div>
@@ -37,20 +54,40 @@ import { Options, Vue } from 'vue-class-component';
 import Card from '@/core/Card.vue';
 import FormField from '@/core/FormField.vue';
 import Button from '@/core/Button.vue';
+import Select from '@/core/Select.vue';
+
+import { Languages, LanguagesList } from '@/constants';
+import { ConverterService } from '@/services/converter/converterService';
 
 @Options({
   components: {
     Card,
     FormField,
     Button,
+    Select,
   },
 })
 export default class NumberConverter extends Vue {
   currentNumber: number | null = null;
-  formattedNumber = '';
+  convertedNumber = '';
+  converter: ConverterService = new ConverterService();
+  languagesOptions = LanguagesList;
+
+  get isValid(): boolean {
+    return (
+      this.currentNumber === 0 ||
+      (!!this.currentNumber &&
+        !isNaN(this.currentNumber) &&
+        this.currentNumber >= 0)
+    );
+  }
 
   convertNumber(): void {
-    console.log(this.currentNumber);
+    this.convertedNumber = this.converter.convertNumber(this.currentNumber);
+  }
+
+  updateLanguage(lan: Languages): void {
+    this.converter.selectedLanguage = lan;
   }
 }
 </script>
@@ -93,8 +130,18 @@ export default class NumberConverter extends Vue {
 
     margin: auto;
 
-    &__form {
+    width: 100%;
+
+    &__actions {
+      display: flex;
+      justify-content: space-between;
+
       width: 100%;
+
+      &__button {
+        // To keep it at the end even if there is not a sibling component
+        margin-left: auto;
+      }
     }
   }
 }

@@ -102,6 +102,7 @@ export default class FormField extends Vue {
 
   &__readonly {
     margin: 0;
+    text-align: left;
 
     &--silent {
       color: var(--text-silent);
