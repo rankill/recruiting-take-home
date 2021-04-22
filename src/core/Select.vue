@@ -32,12 +32,13 @@ import { Options, Vue } from 'vue-class-component';
     },
   },
   mounted() {
-    console.log('Mounted');
     this.$emit('change', this.selected);
   },
 })
 export default class Select extends Vue {
   tabindex!: number;
+  options!: string[];
+  default!: string;
 
   selected = this.default
     ? this.default

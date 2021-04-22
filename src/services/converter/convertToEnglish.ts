@@ -7,56 +7,40 @@ type ComposeFn = (arg: any) => any;
 
 const toNumber = (value: number | string) => Number(value) || 0;
 
-const array = (numbersArray: string): string[] => {
-  debugger;
-  return Array.from(numbersArray);
-};
+const array = (numbersArray: string): string[] => Array.from(numbersArray);
 
-const isEmpty = (numbersArray: string[] | string) => {
-  debugger;
-  return numbersArray.length === 0;
-};
+const isEmpty = (numbersArray: string[] | string) => numbersArray.length === 0;
 
-const take = (takeAmount: number) => (numbersArray: string[]) => {
-  debugger;
-  return numbersArray.slice(0, takeAmount);
-};
+const take = (takeAmount: number) => (numbersArray: string[]) =>
+  numbersArray.slice(0, takeAmount);
 
-const drop = (index: number) => (numbersArray: string[]) => {
-  debugger;
-  return numbersArray.slice(index);
-};
+const drop = (index: number) => (numbersArray: string[]) =>
+  numbersArray.slice(index);
 
-const reverse = (numbersArray: string[]) => {
-  debugger;
-  return numbersArray.slice(0).reverse();
-};
+const reverse = (numbersArray: string[]) => numbersArray.slice(0).reverse();
 
-const compose = (f: ComposeFn) => (g: ComposeFn) => (x: string[]) => {
-  debugger;
-  return f(g(x));
-};
+const compose = (f: ComposeFn) => (g: ComposeFn) => (x: string[]) => f(g(x));
 
-const not = (value: boolean) => {
-  debugger;
-  return !value;
-};
+const not = (value: boolean) => !value;
+
 const splitArrayByAmount = (amount: number) => (
   numbersArray: string[]
-): unknown[] => {
-  debugger;
-  return isEmpty(numbersArray)
+): unknown[] =>
+  isEmpty(numbersArray)
     ? []
     : [
         take(amount)(numbersArray),
         ...splitArrayByAmount(amount)(drop(amount)(numbersArray)),
       ];
-};
 
-// convertToEnglish :: (Number a, String a) => a -> String
+/**
+ * Method to convert a number to english words
+ * Usage example: convertToEnglish(123) --> One hundred and twenty-three
+ * @param numberToConvert
+ */
 const convertToEnglish = (numberToConvert: number | string): string => {
   const hundredsMap: string[] = [
-    '',
+    '', // 0 is ignored and passed as empty string
     'one',
     'two',
     'three',
@@ -78,8 +62,8 @@ const convertToEnglish = (numberToConvert: number | string): string => {
     'nineteen',
   ];
   const tensMap: string[] = [
-    '',
-    '',
+    '', // 0 is Zero
+    '', // 10 is ten from hundredsMap
     'twenty',
     'thirty',
     'forty',
@@ -90,7 +74,7 @@ const convertToEnglish = (numberToConvert: number | string): string => {
     'ninety',
   ];
   const thousandsMap: string[] = [
-    '',
+    '', // 0 group is in hundreds limit
     'thousand',
     'million',
     'billion',
@@ -103,39 +87,36 @@ const convertToEnglish = (numberToConvert: number | string): string => {
     'nonillion',
   ];
 
-  const makeStringGroups = ([ones, tens, huns]: string[]) => {
+  const buildStringsGroups = ([ones, tens, huns]: string[]) => {
+    const buildTens = (arrayMap: string[]) => (index: string) =>
+      arrayMap[index] && arrayMap[index]
+        ? `and ${arrayMap[tens] && arrayMap[index]} -`
+        : '';
+
     return [
       toNumber(huns) === 0 ? '' : `${hundredsMap[huns]} hundred `, // Build hundreds
-      toNumber(ones) === 0
-        ? tensMap[tens]
-        : (tensMap[tens] && tensMap[tens] + '-') || '', // Build tens
+      toNumber(ones) === 0 ? tensMap[tens] : buildTens(tensMap)(tens), // Build tens
       hundredsMap[tens + ones] || hundredsMap[ones], // Build ones
     ].join('');
   };
 
-  const validateThousands = (group: string, i: string) => {
-    debugger;
-    return group === '' ? group : `${group} ${thousandsMap[i]}`;
-  };
+  const buildThousands = (group: string, i: string) =>
+    group === '' ? group : `${group} ${thousandsMap[i]}`;
 
   if (typeof numberToConvert === 'number') {
-    debugger;
     return convertToEnglish(String(numberToConvert));
   } else if (numberToConvert === '0') {
-    debugger;
     return 'zero';
   }
 
-  debugger;
   return (
     // Convert string to array -> Reverse the array -> split the array in three parts
     // Eg. [5, 4, 3, 2, 1] --> [5, 4, 3], [2, 1]]
     compose(splitArrayByAmount(3))(reverse)(array(numberToConvert))
-      // Build words groups --> [1, 2, 3] ->  ['One hundred' and twenty-three]
-      .map(makeStringGroups)
-      .map(validateThousands)
-      .filter(compose(not)(isEmpty))
-      .reverse()
+      .map(buildStringsGroups) // Build words groups --> [1, 2, 3] ->  ['One hundred' and twenty-three]
+      .map(buildThousands) // Check if the are thousands values
+      .filter(compose(not)(isEmpty)) // Clean string by not empty values
+      .reverse() // Re organize array
       .join(' ')
   );
 };

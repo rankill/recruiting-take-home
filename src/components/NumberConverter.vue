@@ -11,6 +11,8 @@
         @input="convertedNumber = ''"
         v-model="currentNumber"
         @keypress.enter="convertNumber"
+        min="0"
+        max="999999999"
       />
 
       <FormField
@@ -83,7 +85,11 @@ export default class NumberConverter extends Vue {
   }
 
   convertNumber(): void {
-    this.convertedNumber = this.converter.convertNumber(this.currentNumber);
+    try {
+      this.convertedNumber = this.converter.convertNumber(this.currentNumber);
+    } catch (error) {
+      alert(error);
+    }
   }
 
   updateLanguage(lan: Languages): void {

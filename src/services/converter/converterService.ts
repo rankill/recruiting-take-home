@@ -7,7 +7,13 @@ export class ConverterService {
     this._selectedLanguage = type;
   }
 
-  convertNumber(value: number): string {
+  convertNumber(value: number | null): string {
+    if (typeof value !== 'number') {
+      throw new Error(
+        `A valid number must be passed: ${value} is not a number`
+      );
+    }
+
     let convertedNumber = '';
     switch (this._selectedLanguage) {
       // Here we will add all the languages that we want to convert the number to
